@@ -8,7 +8,7 @@
       "doi_thu_2": "Nghiêm Xuân Hùng",
       "chap_bong": "",
       "ket_qua": "1-3",
-      "mo_ta": "",
+      "mo_ta": "Giải BIDV HO Happy Day",
       "link_youtube": "https://www.youtube.com/watch?v=h5DqPOEvZ-8&list=PLWmY-8pplD9A",
       "link_facebook": "",
       "link_khac": ""
@@ -30,19 +30,34 @@
             "khoi_nguon_giao_bong": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giao_bong_thuan",
-              "dac_tinh": { "diem_roi_ngang": "phai", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_tao_loi_the_N_2": null,
             "cu_dap_tra_N_1": {
               "nguoi_thuc_hien": "Hungpv",
               "ky_thuat": "go_day_bong",
-              "dac_tinh": { "diem_roi_ngang": "trai", "do_dai": "dai", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_ket_thuc_N": {
               "tinh_chat": "forced_error",
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giat_phai",
-              "dac_tinh": { "diem_roi_ngang": null, "do_dai": null, "do_xoay": null, "vi_tri_hong": "ruc_luoi" }
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ruc_luoi"
+              }
             }
           },
           {
@@ -54,23 +69,43 @@
             "khoi_nguon_giao_bong": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giao_bong_thuan",
-              "dac_tinh": { "diem_roi_ngang": "giua", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_tao_loi_the_N_2": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "bat_ngan_tha_long",
-              "dac_tinh": { "diem_roi_ngang": "giua", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_dap_tra_N_1": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "go_day_bong",
-              "dac_tinh": { "diem_roi_ngang": "trai", "do_dai": "dai", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_ket_thuc_N": {
               "tinh_chat": "unforced_error",
               "nguoi_thuc_hien": "Hungpv",
               "ky_thuat": "doi_cong_trai",
-              "dac_tinh": { "diem_roi_ngang": null, "do_dai": null, "do_xoay": null, "vi_tri_hong": "ra_ngoai_dai" }
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
             }
           }
         ]
