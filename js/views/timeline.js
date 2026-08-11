@@ -197,6 +197,10 @@ export function renderTimeline() {
                         </div>
                     </div>
                     ${renderCompactPoint(pt, state.timelineExpandedIdx === idx)}
+                    <div class="mt-2 pt-2 border-t border-slate-100 flex gap-2 justify-end">
+                        <button onclick="event.stopPropagation(); window.app.actions.rally.editRally(${idx}); window.app.navigate('rallyEntry', {selectedMatchId: '${match.id_tran_dau}', selectedGameId: '${state.selectedGameId}'})" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-bold hover:bg-blue-100 transition">✏ Sửa</button>
+                        <button onclick="event.stopPropagation(); window.app.actions.rally.deleteRally(${idx})" class="px-3 py-1 bg-red-50 text-red-600 rounded-md text-xs font-bold hover:bg-red-100 transition">🗑 Xóa</button>
+                    </div>
                 </div>
             </div>
             `;

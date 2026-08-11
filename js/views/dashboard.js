@@ -82,13 +82,21 @@ const renderHeatmap = (title, data, colorType, perspectiveStr) => {
     const hm = data.heatmap;
     const total = data.totalCount;
     
+    // For WIN: top is 'dai' (long), bottom is 'ngan' (short). L-R is left-right.
+    // For LOSS: top is 'ngan' (short), bottom is 'dai' (long). L-R is left-right.
+    const isWin = colorType === 'win';
+    const topY = isWin ? 'dai' : 'ngan';
+    const bottomY = isWin ? 'ngan' : 'dai';
+    
     const cell = (y, x) => {
         const val = hm[y][x];
         const p = safePercentage(val, total);
         const colClass = getHeatmapColor(p, colorType);
-        const xText = x === 'trai' ? 'Trái' : x === 'phai' ? 'Phải' : 'Giữa';
-        const yText = y === 'ngan' ? 'Ngắn' : 'Dài';
-        const titleText = `${title === 'Heatmap Điểm Thắng' ? 'Điểm thắng' : 'Điểm thua'}\n${xText} · ${yText}\n${val} điểm / ${Math.round(p*10)/10}%`;
+        
+        let displayX = x === 'trai' ? 'Trái' : x === 'phai' ? 'Phải' : 'Giữa';
+        let displayY = y === 'ngan' ? 'Ngắn' : 'Dài';
+        
+        const titleText = `${title === 'Heatmap Điểm Thắng' ? 'Điểm thắng' : 'Điểm thua'}\n${displayX} · ${displayY}\n${val} điểm / ${Math.round(p*10)/10}%`;
         
         return `
             <div title="${titleText}" class="${colClass} border border-slate-200 flex flex-col items-center justify-center text-xs sm:text-sm font-bold shadow-sm transition hover:opacity-80 cursor-pointer min-h-[4rem] rounded-sm">
@@ -104,11 +112,11 @@ const renderHeatmap = (title, data, colorType, perspectiveStr) => {
             </h3>
             
             <div class="mt-4 bg-slate-50 border-2 border-slate-200 p-2 rounded-xl grid grid-cols-3 gap-1 w-full max-w-[280px] h-48 sm:h-56 relative shadow-inner">
-                ${cell('ngan', 'trai')} ${cell('ngan', 'giua')} ${cell('ngan', 'phai')}
-                ${cell('dai', 'trai')} ${cell('dai', 'giua')} ${cell('dai', 'phai')}
+                ${cell(topY, 'trai')} ${cell(topY, 'giua')} ${cell(topY, 'phai')}
+                ${cell(bottomY, 'trai')} ${cell(bottomY, 'giua')} ${cell(bottomY, 'phai')}
                 
-                <div class="absolute -top-6 w-full text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Lưới (Ngắn)</div>
-                <div class="absolute -bottom-6 w-full text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Cạnh bàn (Dài)</div>
+                <div class="absolute -top-6 w-full text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">${isWin ? 'Cạnh bàn (Dài)' : 'Lưới (Ngắn)'}</div>
+                <div class="absolute -bottom-6 w-full text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">${isWin ? 'Lưới (Ngắn)' : 'Cạnh bàn (Dài)'}</div>
                 <div class="absolute -left-6 h-full flex items-center text-[10px] sm:text-xs font-bold text-slate-500 -rotate-90">Trái</div>
                 <div class="absolute -right-6 h-full flex items-center text-[10px] sm:text-xs font-bold text-slate-500 rotate-90">Phải</div>
             </div>

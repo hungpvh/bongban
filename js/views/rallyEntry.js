@@ -11,10 +11,10 @@ let rallyState = {
   pointWinner: "",
   pointType: "winner",
   strokes: {
-    server: { technique: "", dropX: "", dropY: "", player: "" },
-    n2: { technique: "", dropX: "", dropY: "", player: "" },
-    n1: { technique: "", dropX: "", dropY: "", player: "" },
-    n0: { technique: "", dropX: "", dropY: "", player: "", netOut: "" },
+    server: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+    n2: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+    n1: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+    n0: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false, netOut: "" },
   },
   editingPointIndex: -1,
 };
@@ -26,10 +26,10 @@ const resetForm = () => {
     pointWinner: "",
     pointType: "winner",
     strokes: {
-      server: { technique: "", dropX: "", dropY: "", player: "" },
-      n2: { technique: "", dropX: "", dropY: "", player: "" },
-      n1: { technique: "", dropX: "", dropY: "", player: "" },
-      n0: { technique: "", dropX: "", dropY: "", player: "", netOut: "" },
+      server: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+      n2: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+      n1: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false },
+      n0: { technique: "", dropX: "", dropY: "", player: "", spin: "", skipped: false, netOut: "" },
     },
     editingPointIndex: -1,
   };
@@ -102,13 +102,13 @@ window.app.actions.rally = {
               dac_tinh: {
                 diem_roi_ngang: rallyState.strokes.server.dropX || null,
                 do_dai: rallyState.strokes.server.dropY || null,
-                do_xoay: null,
+                do_xoay: rallyState.strokes.server.spin || null,
                 vi_tri_hong: null,
               },
             }
           : null,
       cu_tao_loi_the_N_2:
-        rallyState.touches >= 3
+        rallyState.touches >= 3 && !rallyState.strokes.n2.skipped
           ? {
               nguoi_thuc_hien: isServer(rallyState.touches - 2)
                 ? currentServer
@@ -119,13 +119,13 @@ window.app.actions.rally = {
               dac_tinh: {
                 diem_roi_ngang: rallyState.strokes.n2.dropX || null,
                 do_dai: rallyState.strokes.n2.dropY || null,
-                do_xoay: null,
+                do_xoay: rallyState.strokes.n2.spin || null,
                 vi_tri_hong: null,
               },
             }
           : null,
       cu_dap_tra_N_1:
-        rallyState.touches >= 2
+        rallyState.touches >= 2 && !rallyState.strokes.n1.skipped
           ? {
               nguoi_thuc_hien: isServer(rallyState.touches - 1)
                 ? currentServer
@@ -136,7 +136,7 @@ window.app.actions.rally = {
               dac_tinh: {
                 diem_roi_ngang: rallyState.strokes.n1.dropX || null,
                 do_dai: rallyState.strokes.n1.dropY || null,
-                do_xoay: null,
+                do_xoay: rallyState.strokes.n1.spin || null,
                 vi_tri_hong: null,
               },
             }
@@ -152,7 +152,7 @@ window.app.actions.rally = {
         dac_tinh: {
           diem_roi_ngang: rallyState.strokes.n0.dropX || null,
           do_dai: rallyState.strokes.n0.dropY || null,
-          do_xoay: null,
+          do_xoay: rallyState.strokes.n0.spin || null,
           vi_tri_hong: rallyState.strokes.n0.netOut || null,
         },
       },
@@ -210,27 +210,33 @@ window.app.actions.rally = {
         point.khoi_nguon_giao_bong.ky_thuat || "";
       rallyState.strokes.server.dropX =
         point.khoi_nguon_giao_bong.dac_tinh?.diem_roi_ngang || "";
-      rallyState.strokes.server.dropY =
-        point.khoi_nguon_giao_bong.dac_tinh?.do_dai || "";
+      rallyState.strokes.server.dropY = point.khoi_nguon_giao_bong.dac_tinh?.do_dai || "";
+      rallyState.strokes.server.spin = point.khoi_nguon_giao_bong.dac_tinh?.do_xoay || "";
     }
     if (point.cu_tao_loi_the_N_2) {
       rallyState.strokes.n2.technique = point.cu_tao_loi_the_N_2.ky_thuat || "";
-      rallyState.strokes.n2.dropX =
-        point.cu_tao_loi_the_N_2.dac_tinh?.diem_roi_ngang || "";
-      rallyState.strokes.n2.dropY =
-        point.cu_tao_loi_the_N_2.dac_tinh?.do_dai || "";
+      rallyState.strokes.n2.dropX = point.cu_tao_loi_the_N_2.dac_tinh?.diem_roi_ngang || "";
+      rallyState.strokes.n2.dropY = point.cu_tao_loi_the_N_2.dac_tinh?.do_dai || "";
+      rallyState.strokes.n2.spin = point.cu_tao_loi_the_N_2.dac_tinh?.do_xoay || "";
+      rallyState.strokes.n2.skipped = false;
+    } else if (point.tong_so_cham >= 3) {
+      rallyState.strokes.n2.skipped = true;
     }
     if (point.cu_dap_tra_N_1) {
       rallyState.strokes.n1.technique = point.cu_dap_tra_N_1.ky_thuat || "";
-      rallyState.strokes.n1.dropX =
-        point.cu_dap_tra_N_1.dac_tinh?.diem_roi_ngang || "";
+      rallyState.strokes.n1.dropX = point.cu_dap_tra_N_1.dac_tinh?.diem_roi_ngang || "";
       rallyState.strokes.n1.dropY = point.cu_dap_tra_N_1.dac_tinh?.do_dai || "";
+      rallyState.strokes.n1.spin = point.cu_dap_tra_N_1.dac_tinh?.do_xoay || "";
+      rallyState.strokes.n1.skipped = false;
+    } else if (point.tong_so_cham >= 2) {
+      rallyState.strokes.n1.skipped = true;
     }
     if (point.cu_ket_thuc_N) {
       rallyState.strokes.n0.technique = point.cu_ket_thuc_N.ky_thuat || "";
       rallyState.strokes.n0.dropX =
         point.cu_ket_thuc_N.dac_tinh?.diem_roi_ngang || "";
       rallyState.strokes.n0.dropY = point.cu_ket_thuc_N.dac_tinh?.do_dai || "";
+      rallyState.strokes.n0.spin = point.cu_ket_thuc_N.dac_tinh?.do_xoay || "";
       rallyState.strokes.n0.netOut =
         point.cu_ket_thuc_N.dac_tinh?.vi_tri_hong || "";
     }
@@ -257,14 +263,41 @@ export function renderRallyEntry() {
   );
   if (!match || !game) return `<p>Lỗi: Không tìm thấy dữ liệu</p>`;
 
+  if (!state.dictionary) {
+    return `
+    <div class="p-8 text-center bg-slate-50 h-full flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+        <p class="text-slate-500 font-medium">Đang tải kỹ thuật...</p>
+    </div>`;
+  }
+  if (Object.keys(state.dictionary).length === 0) {
+    return `
+    <div class="p-8 text-center bg-slate-50 h-full flex flex-col items-center justify-center">
+        <p class="text-danger font-medium mb-4">Lỗi: Không tải được từ điển dữ liệu.</p>
+        <button onclick="window.app.navigate('matchList')" class="px-4 py-2 bg-slate-200 rounded font-bold hover:bg-slate-300 transition">Quay lại</button>
+    </div>`;
+  }
+
   const p1 = match.thong_tin.doi_thu_1;
   const p2 = match.thong_tin.doi_thu_2;
 
   const dict = state.dictionary || {};
-  const techniques = dict.ky_thuat || {};
-  const techOptions = Object.entries(techniques)
+  const allTechniques = dict.ky_thuat || {};
+  
+  // Logic phân loại: Nếu key bắt đầu bằng "giao_bong" -> là giao bóng, ngược lại là đánh bóng/rally
+  const isServeTechnique = (k) => k.startsWith("giao_bong");
+  
+  const techOptions = Object.entries(allTechniques)
+    .filter(([k, v]) => !isServeTechnique(k))
     .map(([k, v]) => `<option value="${k}">${v}</option>`)
     .join("");
+    
+  const serveOptions = Object.entries(allTechniques)
+    .filter(([k, v]) => isServeTechnique(k))
+    .map(([k, v]) => `<option value="${k}">${v}</option>`)
+    .join("");
+    
+  const spins = dict.thuoc_tinh_bong?.do_xoay || {};
 
   const renderGrid = (strokeKey, receiverPlayer) => {
     const isP1Receiver = receiverPlayer === p1;
@@ -306,17 +339,49 @@ export function renderRallyEntry() {
     showGrid = true,
   ) => {
     const selectedTech = rallyState.strokes[strokeKey].technique;
-    const customTechOptions = techOptions.replace(
+    let optionsHtml = strokeKey === 'server' ? serveOptions : techOptions;
+    
+    // Xử lý trường hợp dữ liệu cũ không còn trong từ điển
+    if (selectedTech && !optionsHtml.includes(`value="${selectedTech}"`)) {
+       optionsHtml += `<option value="${selectedTech}">Kỹ thuật không còn trong từ điển: ${selectedTech}</option>`;
+    }
+
+    const customTechOptions = optionsHtml.replace(
       `value="${selectedTech}"`,
       `value="${selectedTech}" selected`,
     );
+    
+    const selectedSpin = rallyState.strokes[strokeKey].spin;
+    let spinHtml = `<div class="mt-3"><label class="block text-xs font-semibold text-slate-500 mb-1">Độ xoáy</label><div class="flex flex-wrap gap-2">`;
+    Object.entries(spins).forEach(([k, v]) => {
+        const isActive = selectedSpin === k;
+        spinHtml += `<button onclick="window.app.actions.rally.setStrokeProp('${strokeKey}', 'spin', '${isActive ? '' : k}')" class="px-3 py-2 text-sm font-bold rounded-lg border transition ${isActive ? 'bg-indigo-500 text-white border-indigo-600' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}">${v}</button>`;
+    });
+    spinHtml += `</div></div>`;
+    
+    const isSkipped = rallyState.strokes[strokeKey].skipped;
+    if (isSkipped) {
+        return `
+        <div class="border rounded-xl p-4 bg-slate-50 relative opacity-50">
+            <div class="flex justify-between items-center">
+                <h4 class="font-bold text-slate-700 m-0">${title} - <span class="text-primary">${playerLabel}</span></h4>
+                <button onclick="window.app.actions.rally.setStrokeProp('${strokeKey}', 'skipped', false)" class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">Nhập lại</button>
+            </div>
+            <div class="text-xs text-slate-400 mt-1 italic">Đã bỏ qua</div>
+        </div>`;
+    }
+
+    const skipButtonHtml = (strokeKey === 'n1' || strokeKey === 'n2') ? 
+        `<button onclick="window.app.actions.rally.setStrokeProp('${strokeKey}', 'skipped', true)" class="absolute top-4 right-4 text-xs font-bold text-slate-500 bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded transition">Bỏ qua</button>` : '';
+
     return `
         <div class="border rounded-xl p-4 bg-slate-50 relative">
+            ${skipButtonHtml}
             <h4 class="font-bold text-slate-700 mb-2">${title} - <span class="text-primary">${playerLabel}</span></h4>
             <div class="mb-3">
-                <label class="block text-xs font-semibold text-slate-500 mb-1">Kỹ thuật</label>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">${strokeKey === 'server' ? 'Loại giao bóng' : 'Kỹ thuật'}</label>
                 <select class="w-full p-2 border rounded-lg bg-white" onchange="window.app.actions.rally.setStrokeProp('${strokeKey}', 'technique', this.value)">
-                    <option value="">-- Chọn kỹ thuật --</option>
+                    <option value="">-- Chọn ${strokeKey === 'server' ? 'loại giao bóng' : 'kỹ thuật'} --</option>
                     ${customTechOptions}
                 </select>
             </div>
@@ -330,6 +395,7 @@ export function renderRallyEntry() {
             `
                 : ""
             }
+            ${spinHtml}
             ${
               strokeKey === "n0"
                 ? `

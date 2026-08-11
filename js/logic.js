@@ -48,6 +48,7 @@ export const recalculateGame = (game, player1, player2) => {
         
         return {
             ...point,
+            thu_tu_diem: index + 1,
             ty_so_hien_tai: `${currentP1}-${currentP2}`,
             khoi_nguon_giao_bong: {
                 ...point.khoi_nguon_giao_bong,
