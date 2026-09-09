@@ -111,5 +111,21 @@
         ]
       }
     ]
+  },
+  {
+    "id_tran_dau": "match_1788924687071",
+    "thong_tin": {
+      "ngay_thi_dau": "2026-09-06",
+      "loai_hinh": "Thi đấu giải",
+      "doi_thu_1": "Hungpv",
+      "doi_thu_2": "Vũ Kim Ngọc",
+      "chap_bong": "Kim Ngọc chấp 2",
+      "ket_qua": "2-3",
+      "mo_ta": "Giải Đức Lê chich bông 2026",
+      "link_youtube": "https://www.youtube.com/watch?v=l875NukOgxU",
+      "link_facebook": "",
+      "link_khac": ""
+    },
+    "chi_tiet_game": []
   }
 ]
