@@ -21,8 +21,12 @@ window.app.actions.timeline = {
 
 export function renderTimeline() {
     if (!state.selectedMatchId) return `<p class="p-6 text-center text-slate-500">Vui lòng chọn trận đấu.</p>`;
-
     
+    
+    
+    const match = state.matches.find(m => m.id_tran_dau === state.selectedMatchId);
+    if (!match) return `<p class="p-6 text-center text-slate-500">Không tìm thấy trận đấu.</p>`;
+
     if (!state.selectedGameId) {
         return `
         <div class="flex flex-col h-full bg-slate-100">
@@ -45,8 +49,7 @@ export function renderTimeline() {
         `;
     }
     
-    const match = state.matches.find(m => m.id_tran_dau === state.selectedMatchId);
-    if (!match) return `<p class="p-6 text-center text-slate-500">Không tìm thấy trận đấu.</p>`;
+    
     
     const p1 = match.thong_tin.doi_thu_1;
     const p2 = match.thong_tin.doi_thu_2;
