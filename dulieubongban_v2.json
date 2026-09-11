@@ -132,7 +132,7 @@
         "game_so": 1,
         "ty_so_bat_dau": "2-0",
         "nguoi_giao_bong_truoc": "Vũ Kim Ngọc",
-        "ty_so_chung_cuoc": "6-4",
+        "ty_so_chung_cuoc": "6-5",
         "trang_thai": "dang_danh",
         "danh_sach_diem": [
           {
@@ -425,6 +425,55 @@
                 "do_dai": null,
                 "do_xoay": null,
                 "vi_tri_hong": "truot_bong"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 9,
+            "ty_so_hien_tai": "6-5",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 4,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
               }
             }
           }
