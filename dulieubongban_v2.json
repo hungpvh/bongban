@@ -132,7 +132,7 @@
         "game_so": 1,
         "ty_so_bat_dau": "2-0",
         "nguoi_giao_bong_truoc": "Vũ Kim Ngọc",
-        "ty_so_chung_cuoc": "8-6",
+        "ty_so_chung_cuoc": "8-7",
         "trang_thai": "dang_danh",
         "danh_sach_diem": [
           {
@@ -585,6 +585,37 @@
                 "do_dai": "dai",
                 "do_xoay": "len",
                 "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 13,
+            "ty_so_hien_tai": "8-7",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
               }
             }
           }
