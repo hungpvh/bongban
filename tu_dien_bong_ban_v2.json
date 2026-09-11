@@ -39,9 +39,9 @@
   },
   "thuoc_tinh_bong": {
     "diem_roi_ngang": {
-      "trai": "Trái (Left)",
-      "giua": "Giữa (Middle)",
-      "phai": "Phải (Right)"
+      "trai": "Trái",
+      "giua": "Giữa",
+      "phai": "Phải"
     },
     "do_dai": {
       "ngan": "Ngắn",
