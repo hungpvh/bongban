@@ -693,7 +693,7 @@
           {
             "thu_tu_diem": 16,
             "ty_so_hien_tai": "11-7",
-            "loai_diem": "thang",
+            "loai_diem": "thua",
             "nguoi_ghi_diem": "Hungpv",
             "tong_so_cham": 2,
             "nguoi_giao_bong": "Hungpv",
@@ -710,7 +710,7 @@
             "cu_tao_loi_the_N_2": null,
             "cu_dap_tra_N_1": null,
             "cu_ket_thuc_N": {
-              "tinh_chat": "winner",
+              "tinh_chat": "forced_error",
               "nguoi_thuc_hien": "Vũ Kim Ngọc",
               "ky_thuat": "doi_cong_trai",
               "dac_tinh": {
