@@ -39,12 +39,12 @@
   },
   "thuoc_tinh_bong": {
     "diem_roi_ngang": {
-      "trai": "Trái tay (Backhand)",
-      "giua": "Giữa bàn (Middle)",
-      "phai": "Phải tay (Forehand)"
+      "trai": "Trái (Left)",
+      "giua": "Giữa (Middle)",
+      "phai": "Phải (Right)"
     },
     "do_dai": {
-      "ngan": "Ngắn (2 nảy)",
+      "ngan": "Ngắn",
       "dai": "Dài"
     },
     "do_xoay": {
