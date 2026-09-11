@@ -65,22 +65,21 @@ export const MOCK_DICTIONARY = {
 
 export const MOCK_MATCHES = [
   {
-    "id_tran_dau": "mock_match_1",
+    "id_tran_dau": "match_1785756349878",
     "thong_tin": {
-      "ngay_thi_dau": "2024-05-10",
+      "ngay_thi_dau": "2026-08-02",
       "loai_hinh": "Thi đấu giải",
       "doi_thu_1": "Hungpv",
       "doi_thu_2": "Nghiêm Xuân Hùng",
-      "chap_bong": "Không chấp",
-      "ket_qua": "1-1",
-      "mo_ta": "Trận đấu thử nghiệm hệ thống mock",
-      "link_youtube": "https://youtube.com",
+      "chap_bong": "",
+      "ket_qua": "1-3",
+      "mo_ta": "Giải BIDV HO Happy Day 2026",
+      "link_youtube": "https://www.youtube.com/watch?v=h5DqPOEvZ-8&list=PLWmY-8pplD9A",
       "link_facebook": "",
       "link_khac": ""
     },
     "chi_tiet_game": [
       {
-        "id_game": "mock_game_1",
         "game_so": 1,
         "ty_so_bat_dau": "0-0",
         "nguoi_giao_bong_truoc": "Nghiêm Xuân Hùng",
@@ -96,19 +95,34 @@ export const MOCK_MATCHES = [
             "khoi_nguon_giao_bong": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giao_bong_thuan",
-              "dac_tinh": { "diem_roi_ngang": "phai", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_tao_loi_the_N_2": null,
             "cu_dap_tra_N_1": {
               "nguoi_thuc_hien": "Hungpv",
               "ky_thuat": "go_day_bong",
-              "dac_tinh": { "diem_roi_ngang": "trai", "do_dai": "dai", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_ket_thuc_N": {
               "tinh_chat": "forced_error",
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giat_phai",
-              "dac_tinh": { "diem_roi_ngang": null, "do_dai": null, "do_xoay": null, "vi_tri_hong": "ruc_luoi" }
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ruc_luoi"
+              }
             }
           },
           {
@@ -120,44 +134,184 @@ export const MOCK_MATCHES = [
             "khoi_nguon_giao_bong": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "giao_bong_thuan",
-              "dac_tinh": { "diem_roi_ngang": "giua", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_tao_loi_the_N_2": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "bat_ngan_tha_long",
-              "dac_tinh": { "diem_roi_ngang": "giua", "do_dai": "ngan", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_dap_tra_N_1": {
               "nguoi_thuc_hien": "Nghiêm Xuân Hùng",
               "ky_thuat": "go_day_bong",
-              "dac_tinh": { "diem_roi_ngang": "trai", "do_dai": "dai", "do_xoay": "xuong", "vi_tri_hong": null }
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
             },
             "cu_ket_thuc_N": {
               "tinh_chat": "unforced_error",
               "nguoi_thuc_hien": "Hungpv",
               "ky_thuat": "doi_cong_trai",
-              "dac_tinh": { "diem_roi_ngang": null, "do_dai": null, "do_xoay": null, "vi_tri_hong": "ra_ngoai_dai" }
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
             }
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "id_tran_dau": "match_1788924687071",
+    "thong_tin": {
+      "ngay_thi_dau": "2026-09-06",
+      "loai_hinh": "Thi đấu giải",
+      "doi_thu_1": "Hungpv",
+      "doi_thu_2": "Vũ Kim Ngọc",
+      "chap_bong": "Kim Ngọc chấp 2",
+      "ket_qua": "2-3",
+      "mo_ta": "Giải Đức Lê chich bông 2026",
+      "link_youtube": "https://www.youtube.com/watch?v=l875NukOgxU",
+      "link_facebook": "",
+      "link_khac": ""
+    },
+    "chi_tiet_game": [
       {
-        "id_game": "mock_game_2",
-        "game_so": 2,
-        "ty_so_bat_dau": "0-2",
-        "nguoi_giao_bong_truoc": "Hungpv",
-        "ty_so_chung_cuoc": "2-2",
-        "trang_thai": "dang_danh",
-        "danh_sach_diem": []
-      },
-      {
-        "id_game": "mock_game_3",
-        "game_so": 3,
+        "id_game": "game_1788925277208",
+        "game_so": 1,
         "ty_so_bat_dau": "2-0",
-        "nguoi_giao_bong_truoc": "Nghiêm Xuân Hùng",
-        "ty_so_chung_cuoc": "3-1",
+        "nguoi_giao_bong_truoc": "Vũ Kim Ngọc",
+        "ty_so_chung_cuoc": "3-2",
         "trang_thai": "dang_danh",
-        "danh_sach_diem": []
+        "danh_sach_diem": [
+          {
+            "thu_tu_diem": 1,
+            "ty_so_hien_tai": "2-1",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 2,
+            "ty_so_hien_tai": "3-1",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "truot_bong"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 3,
+            "ty_so_hien_tai": "3-2",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          }
+        ]
       }
     ]
   }

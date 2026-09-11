@@ -76,7 +76,7 @@ export function renderTimeline() {
     const getTechName = (k) => dict.ky_thuat?.[k] || k;
     
     const renderCompactPoint = (pt, isExpanded) => {
-        let n2Html = '', n1Html = '', n0Html = '';
+        let serveHtml = '', n2Html = '', n1Html = '', n0Html = '';
         
         const renderBadge = (player) => {
             if (!player) return '';
@@ -85,6 +85,7 @@ export function renderTimeline() {
             if (player === p2) return `<span class="${badgeClasses}">2</span>`;
             return '';
         };
+        const serveInfo = pt.khoi_nguon_giao_bong;
         const sn2 = pt.cu_tao_loi_the_N_2;
         const sn1 = pt.cu_dap_tra_N_1;
         const sn0 = pt.cu_ket_thuc_N;
@@ -97,6 +98,9 @@ export function renderTimeline() {
             if(s.dac_tinh?.do_xoay) parts.push(dict.thuoc_tinh_bong?.do_xoay?.[s.dac_tinh.do_xoay] || s.dac_tinh.do_xoay);
             return parts.join(' · ');
         };
+        
+        if (serveInfo) serveHtml = `<div class="text-xs text-slate-600 mb-0.5">${renderBadge(serveInfo.nguoi_thuc_hien)}<span class="font-bold w-6 inline-block align-middle">1</span> <span class="align-middle">${renderAttr(serveInfo)}</span></div>`;
+        else serveHtml = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400 ml-[28px] align-middle">1</span> <span class="align-middle">Không ghi nhận</span></div>`;
         
         if (sn2) n2Html = `<div class="text-xs text-slate-600 mb-0.5">${renderBadge(sn2.nguoi_thuc_hien)}<span class="font-bold w-6 inline-block align-middle">N-2</span> <span class="align-middle">${renderAttr(sn2)}</span></div>`;
         else n2Html = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400 ml-[28px] align-middle">N-2</span> <span class="align-middle">Không ghi nhận</span></div>`;
@@ -150,6 +154,7 @@ export function renderTimeline() {
 
         return `
             <div class="mt-2 bg-slate-50/50 p-2 rounded-lg border border-slate-100">
+                ${serveHtml}
                 ${n2Html}
                 ${n1Html}
                 ${n0Html}
