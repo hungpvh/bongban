@@ -77,6 +77,14 @@ export function renderTimeline() {
     
     const renderCompactPoint = (pt, isExpanded) => {
         let n2Html = '', n1Html = '', n0Html = '';
+        
+        const renderBadge = (player) => {
+            if (!player) return '';
+            const badgeClasses = "inline-flex items-center justify-center w-[22px] h-[22px] rounded-full bg-slate-200/80 border border-slate-300 text-[11px] font-bold text-slate-700 mr-1.5 align-middle";
+            if (player === p1) return `<span class="${badgeClasses}">1</span>`;
+            if (player === p2) return `<span class="${badgeClasses}">2</span>`;
+            return '';
+        };
         const sn2 = pt.cu_tao_loi_the_N_2;
         const sn1 = pt.cu_dap_tra_N_1;
         const sn0 = pt.cu_ket_thuc_N;
@@ -90,11 +98,11 @@ export function renderTimeline() {
             return parts.join(' · ');
         };
         
-        if (sn2) n2Html = `<div class="text-xs text-slate-600 mb-0.5"><span class="font-bold w-6 inline-block">N-2</span> ${renderAttr(sn2)}</div>`;
-        else n2Html = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400">N-2</span> Không ghi nhận</div>`;
+        if (sn2) n2Html = `<div class="text-xs text-slate-600 mb-0.5">${renderBadge(sn2.nguoi_thuc_hien)}<span class="font-bold w-6 inline-block align-middle">N-2</span> <span class="align-middle">${renderAttr(sn2)}</span></div>`;
+        else n2Html = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400 ml-[28px] align-middle">N-2</span> <span class="align-middle">Không ghi nhận</span></div>`;
         
-        if (sn1) n1Html = `<div class="text-xs text-slate-600 mb-0.5"><span class="font-bold w-6 inline-block">N-1</span> ${renderAttr(sn1)}</div>`;
-        else n1Html = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400">N-1</span> Không ghi nhận</div>`;
+        if (sn1) n1Html = `<div class="text-xs text-slate-600 mb-0.5">${renderBadge(sn1.nguoi_thuc_hien)}<span class="font-bold w-6 inline-block align-middle">N-1</span> <span class="align-middle">${renderAttr(sn1)}</span></div>`;
+        else n1Html = `<div class="text-[10px] text-slate-400 mb-0.5 italic"><span class="font-bold w-6 inline-block not-italic text-slate-400 ml-[28px] align-middle">N-1</span> <span class="align-middle">Không ghi nhận</span></div>`;
         
         if (sn0) {
             let resIcon = '';
@@ -106,7 +114,7 @@ export function renderTimeline() {
                 resIcon += ` <span class="text-danger font-medium text-[10px]">(${dict.thuoc_tinh_loi?.vi_tri_hong?.[sn0.dac_tinh.vi_tri_hong] || sn0.dac_tinh.vi_tri_hong})</span>`;
             }
             
-            n0Html = `<div class="text-xs text-slate-800 mb-0.5"><span class="font-bold w-6 inline-block text-primary">N</span> ${renderAttr(sn0)} ${resIcon ? '· ' + resIcon : ''}</div>`;
+            n0Html = `<div class="text-xs text-slate-800 mb-0.5">${renderBadge(sn0.nguoi_thuc_hien)}<span class="font-bold w-6 inline-block text-primary align-middle">N</span> <span class="align-middle">${renderAttr(sn0)} ${resIcon ? '· ' + resIcon : ''}</span></div>`;
         }
         
         

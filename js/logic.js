@@ -37,7 +37,7 @@ export const recalculateGame = (game, player1, player2) => {
     let currentP2 = startP2;
     
     const recalculatedPoints = (game.danh_sach_diem || []).map((point, index) => {
-        const totalPointsBefore = currentP1 + currentP2;
+        const totalPointsBefore = index;
         const currentServer = calculateServerForPoint(totalPointsBefore, game.nguoi_giao_bong_truoc, player1, player2);
         
         if (point.nguoi_ghi_diem === player1) {
@@ -50,6 +50,7 @@ export const recalculateGame = (game, player1, player2) => {
             ...point,
             thu_tu_diem: index + 1,
             ty_so_hien_tai: `${currentP1}-${currentP2}`,
+            nguoi_giao_bong: currentServer,
             khoi_nguon_giao_bong: {
                 ...point.khoi_nguon_giao_bong,
                 nguoi_thuc_hien: currentServer
