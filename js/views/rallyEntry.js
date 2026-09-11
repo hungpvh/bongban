@@ -1,4 +1,5 @@
 import { state, setState, showToast } from "../store.js";
+import { saveData } from "../api.js";
 import {
   calculateServerForPoint,
   calculateScoreForPoint,
@@ -58,7 +59,7 @@ window.app.actions.rally = {
     rallyState.strokes[strokeKey][prop] = val;
     window.app.setState({});
   },
-  saveRally: () => {
+  saveRally: async () => {
     const match = state.matches.find(
       (m) => m.id_tran_dau === state.selectedMatchId,
     );
@@ -171,8 +172,9 @@ window.app.actions.rally = {
     resetForm();
     showToast("Đã lưu Rally!");
     window.app.setState({});
+    await saveData();
   },
-  deleteRally: (index) => {
+  deleteRally: async (index) => {
     if (!confirm("Xóa rally này?")) return;
     const match = state.matches.find(
       (m) => m.id_tran_dau === state.selectedMatchId,
@@ -190,6 +192,7 @@ window.app.actions.rally = {
     );
     Object.assign(game, newGame);
     window.app.setState({});
+    await saveData();
   },
   editRally: (index) => {
     const match = state.matches.find(
