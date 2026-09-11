@@ -279,7 +279,7 @@
               "dac_tinh": {
                 "diem_roi_ngang": "giua",
                 "do_dai": "dai",
-                "do_xoay": null,
+                "do_xoay": "len",
                 "vi_tri_hong": null
               }
             },
