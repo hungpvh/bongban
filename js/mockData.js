@@ -197,7 +197,7 @@ export const MOCK_MATCHES = [
         "game_so": 1,
         "ty_so_bat_dau": "2-0",
         "nguoi_giao_bong_truoc": "Vũ Kim Ngọc",
-        "ty_so_chung_cuoc": "3-2",
+        "ty_so_chung_cuoc": "11-7",
         "trang_thai": "dang_danh",
         "danh_sach_diem": [
           {
@@ -308,6 +308,481 @@ export const MOCK_MATCHES = [
                 "do_dai": null,
                 "do_xoay": "len",
                 "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 4,
+            "ty_so_hien_tai": "4-2",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 5,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "doi_cong_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "phong_thu_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 5,
+            "ty_so_hien_tai": "4-3",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "ngan",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 6,
+            "ty_so_hien_tai": "5-3",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "doi_cong_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 7,
+            "ty_so_hien_tai": "6-3",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 8,
+            "ty_so_hien_tai": "6-4",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "ngan",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "truot_bong"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 9,
+            "ty_so_hien_tai": "6-5",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 4,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "ngan",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 10,
+            "ty_so_hien_tai": "6-6",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "ngan",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 11,
+            "ty_so_hien_tai": "7-6",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "doi_cong_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 12,
+            "ty_so_hien_tai": "8-6",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": "phai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 13,
+            "ty_so_hien_tai": "8-7",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Vũ Kim Ngọc",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giat_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ruc_luoi"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 14,
+            "ty_so_hien_tai": "9-7",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Vũ Kim Ngọc",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giao_bong_duc",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "doi_cong_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": "giua",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "giat_phai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": null,
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 15,
+            "ty_so_hien_tai": "10-7",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "xuong",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "go_day_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "long",
+                "vi_tri_hong": "ra_ngoai_dai"
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 16,
+            "ty_so_hien_tai": "11-7",
+            "loai_diem": "thua",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 2,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": null,
+            "cu_ket_thuc_N": {
+              "tinh_chat": "forced_error",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "doi_cong_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": null,
+                "do_dai": null,
+                "do_xoay": "len",
+                "vi_tri_hong": "ra_ngoai_dai"
               }
             }
           }
