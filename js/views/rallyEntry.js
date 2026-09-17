@@ -6,6 +6,7 @@ import {
   recalculateGame,
 } from "../logic.js";
 
+let isSavingRally = false;
 let rallyState = {
   touches: 3,
   inputMode: "forward",
@@ -60,139 +61,197 @@ window.app.actions.rally = {
     window.app.setState({});
   },
   saveRally: async () => {
-    const match = state.matches.find(
-      (m) => m.id_tran_dau === state.selectedMatchId,
-    );
-    const game = (match.chi_tiet_game || []).find(
-      (g) =>
-        g.id_game === state.selectedGameId ||
-        (g.game_so && g.game_so.toString() === state.selectedGameId.toString()),
-    );
-
-    if (!rallyState.pointWinner) {
-      showToast("Vui lòng chọn người ghi điểm!", "error");
+    if (isSavingRally) {
+      showToast("Đang lưu dữ liệu, vui lòng chờ...", "info");
       return;
     }
-
-    const p1 = match.thong_tin.doi_thu_1;
-    const p2 = match.thong_tin.doi_thu_2;
-
-    const totalPointsBefore =
-      rallyState.editingPointIndex !== -1
-        ? rallyState.editingPointIndex
-        : game.danh_sach_diem.length;
-    const currentServer = calculateServerForPoint(
-      totalPointsBefore,
-      game.nguoi_giao_bong_truoc,
-      p1,
-      p2,
-    );
-    const isServer = (t) => t % 2 !== 0;
-
-    const newPoint = {
-      thu_tu_diem: totalPointsBefore + 1,
-      ty_so_hien_tai: "",
-      loai_diem: rallyState.pointType === "winner" ? "thang" : "thua",
-      nguoi_ghi_diem: rallyState.pointWinner,
-      tong_so_cham: rallyState.touches,
-      nguoi_giao_bong: currentServer,
-      khoi_nguon_giao_bong:
-        rallyState.touches >= 1
-          ? {
-              nguoi_thuc_hien: currentServer,
-              ky_thuat: rallyState.strokes.server.technique || null,
-              dac_tinh: {
-                diem_roi_ngang: rallyState.strokes.server.dropX || null,
-                do_dai: rallyState.strokes.server.dropY || null,
-                do_xoay: rallyState.strokes.server.spin || null,
-                vi_tri_hong: null,
-              },
-            }
-          : null,
-      cu_tao_loi_the_N_2:
-        rallyState.touches >= 3 && !rallyState.strokes.n2.skipped
-          ? {
-              nguoi_thuc_hien: isServer(rallyState.touches - 2)
-                ? currentServer
-                : currentServer === p1
-                  ? p2
-                  : p1,
-              ky_thuat: rallyState.strokes.n2.technique || null,
-              dac_tinh: {
-                diem_roi_ngang: rallyState.strokes.n2.dropX || null,
-                do_dai: rallyState.strokes.n2.dropY || null,
-                do_xoay: rallyState.strokes.n2.spin || null,
-                vi_tri_hong: null,
-              },
-            }
-          : null,
-      cu_dap_tra_N_1:
-        rallyState.touches >= 2 && !rallyState.strokes.n1.skipped
-          ? {
-              nguoi_thuc_hien: isServer(rallyState.touches - 1)
-                ? currentServer
-                : currentServer === p1
-                  ? p2
-                  : p1,
-              ky_thuat: rallyState.strokes.n1.technique || null,
-              dac_tinh: {
-                diem_roi_ngang: rallyState.strokes.n1.dropX || null,
-                do_dai: rallyState.strokes.n1.dropY || null,
-                do_xoay: rallyState.strokes.n1.spin || null,
-                vi_tri_hong: null,
-              },
-            }
-          : null,
-      cu_ket_thuc_N: {
-        tinh_chat: rallyState.pointType,
-        nguoi_thuc_hien: isServer(rallyState.touches)
-          ? currentServer
-          : currentServer === p1
-            ? p2
-            : p1,
-        ky_thuat: rallyState.strokes.n0.technique || null,
-        dac_tinh: {
-          diem_roi_ngang: rallyState.strokes.n0.dropX || null,
-          do_dai: rallyState.strokes.n0.dropY || null,
-          do_xoay: rallyState.strokes.n0.spin || null,
-          vi_tri_hong: rallyState.strokes.n0.netOut || null,
-        },
-      },
-    };
-
-    if (rallyState.editingPointIndex !== -1) {
-      game.danh_sach_diem[rallyState.editingPointIndex] = newPoint;
-    } else {
-      game.danh_sach_diem.push(newPoint);
+    isSavingRally = true;
+    try {
+      await window.app.actions.rally.performSaveRally();
+    } finally {
+      isSavingRally = false;
     }
+  },
+  performSaveRally: async () => {
+    let retryCount = 0;
+    while (retryCount < 3) {
+      const match = state.matches.find(
+        (m) => m.id_tran_dau === state.selectedMatchId,
+      );
+      const game = (match.chi_tiet_game || []).find(
+        (g) =>
+          g.id_game === state.selectedGameId ||
+          (g.game_so && g.game_so.toString() === state.selectedGameId.toString()),
+      );
+      if (!rallyState.pointWinner) {
+        showToast("Vui lòng chọn người ghi điểm!", "error");
+        return;
+      }
+      const p1 = match.thong_tin.doi_thu_1;
+      const p2 = match.thong_tin.doi_thu_2;
 
-    const newGame = recalculateGame(game, p1, p2);
-    Object.assign(game, newGame);
+      const isEditing = rallyState.editingPointIndex !== -1;
+      let nextId;
+      if (isEditing) {
+          nextId = game.danh_sach_diem[rallyState.editingPointIndex].thu_tu_diem;
+      } else {
+          const maxId = game.danh_sach_diem.reduce((max, p) => Math.max(max, p.thu_tu_diem || 0), 0);
+          nextId = maxId + 1;
+      }
+      const totalPointsBefore = game.danh_sach_diem.length;
+      const currentServer = calculateServerForPoint(
+        totalPointsBefore,
+        game.nguoi_giao_bong_truoc,
+        p1,
+        p2,
+      );
+      const isServer = (t) => t % 2 !== 0;
 
-    resetForm();
-    showToast("Đã lưu Rally!");
-    window.app.setState({});
-    await saveData();
+      const newPoint = {
+        thu_tu_diem: nextId,
+        ty_so_hien_tai: "",
+        loai_diem: rallyState.pointType === "winner" ? "thang" : "thua",
+        nguoi_ghi_diem: rallyState.pointWinner,
+        tong_so_cham: rallyState.touches,
+        nguoi_giao_bong: currentServer,
+        khoi_nguon_giao_bong:
+          rallyState.touches >= 1
+            ? {
+                nguoi_thuc_hien: currentServer,
+                ky_thuat: rallyState.strokes.server.technique || null,
+                dac_tinh: {
+                  diem_roi_ngang: rallyState.strokes.server.dropX || null,
+                  do_dai: rallyState.strokes.server.dropY || null,
+                  do_xoay: rallyState.strokes.server.spin || null,
+                  vi_tri_hong: null,
+                },
+              }
+            : null,
+        cu_tao_loi_the_N_2:
+          rallyState.touches >= 3 && !rallyState.strokes.n2.skipped
+            ? {
+                nguoi_thuc_hien: isServer(rallyState.touches - 2)
+                  ? currentServer
+                  : currentServer === p1
+                    ? p2
+                    : p1,
+                ky_thuat: rallyState.strokes.n2.technique || null,
+                dac_tinh: {
+                  diem_roi_ngang: rallyState.strokes.n2.dropX || null,
+                  do_dai: rallyState.strokes.n2.dropY || null,
+                  do_xoay: rallyState.strokes.n2.spin || null,
+                  vi_tri_hong: null,
+                },
+              }
+            : null,
+        cu_dap_tra_N_1:
+          rallyState.touches >= 2 && !rallyState.strokes.n1.skipped
+            ? {
+                nguoi_thuc_hien: isServer(rallyState.touches - 1)
+                  ? currentServer
+                  : currentServer === p1
+                    ? p2
+                    : p1,
+                ky_thuat: rallyState.strokes.n1.technique || null,
+                dac_tinh: {
+                  diem_roi_ngang: rallyState.strokes.n1.dropX || null,
+                  do_dai: rallyState.strokes.n1.dropY || null,
+                  do_xoay: rallyState.strokes.n1.spin || null,
+                  vi_tri_hong: null,
+                },
+              }
+            : null,
+        cu_ket_thuc_N: {
+          tinh_chat: rallyState.pointType,
+          nguoi_thuc_hien: isServer(rallyState.touches)
+            ? currentServer
+            : currentServer === p1
+              ? p2
+              : p1,
+          ky_thuat: rallyState.strokes.n0.technique || null,
+          dac_tinh: {
+            diem_roi_ngang: rallyState.strokes.n0.dropX || null,
+            do_dai: rallyState.strokes.n0.dropY || null,
+            do_xoay: rallyState.strokes.n0.spin || null,
+            vi_tri_hong: rallyState.strokes.n0.netOut || null,
+          },
+        },
+      };
+
+      // Create a backup of the original game point in case we need to rollback
+      let originalPointBackup = null;
+      if (isEditing) {
+        originalPointBackup = JSON.parse(JSON.stringify(game.danh_sach_diem[rallyState.editingPointIndex]));
+        game.danh_sach_diem[rallyState.editingPointIndex] = newPoint;
+      } else {
+        game.danh_sach_diem.push(newPoint);
+      }
+      
+      const newGame = recalculateGame(game, p1, p2);
+      Object.assign(game, newGame);
+      
+      
+      const result = await saveData();
+      if (result === true || (result && result.success)) {
+        resetForm();
+        showToast("Đã lưu Rally!");
+        window.app.setState({});
+        return;
+      } else {
+        const err = result.error || new Error("Lỗi khi lưu file");
+        if (err.status === 409 || (err.message && err.message.includes('Lỗi khi lưu file'))) {
+
+          // Rollback local changes
+          if (isEditing) {
+            game.danh_sach_diem[rallyState.editingPointIndex] = originalPointBackup;
+          } else {
+            game.danh_sach_diem.pop();
+          }
+          // Fetch latest
+          const { loadData } = await import('../api.js');
+          await loadData();
+          retryCount++;
+          showToast(`Dữ liệu bị lệch (Conflict). Đang thử lại l${retryCount}/3...`, "info");
+          continue;
+        } else {
+          showToast(`Lưu dữ liệu thất bại: ${err.message}`, "error");
+          return;
+        }
+      }
+    }
+    showToast("Không thể lưu dữ liệu sau 3 lần thử.", "error");
   },
   deleteRally: async (index) => {
     if (!confirm("Xóa rally này?")) return;
-    const match = state.matches.find(
-      (m) => m.id_tran_dau === state.selectedMatchId,
-    );
-    const game = (match.chi_tiet_game || []).find(
-      (g) =>
-        g.id_game === state.selectedGameId ||
-        (g.game_so && g.game_so.toString() === state.selectedGameId.toString()),
-    );
-    game.danh_sach_diem.splice(index, 1);
-    const newGame = recalculateGame(
-      game,
-      match.thong_tin.doi_thu_1,
-      match.thong_tin.doi_thu_2,
-    );
-    Object.assign(game, newGame);
-    window.app.setState({});
-    await saveData();
+    if (isSavingRally) {
+      showToast("Đang thao tác, vui lòng chờ...", "info");
+      return;
+    }
+    isSavingRally = true;
+    try {
+        const match = state.matches.find(
+          (m) => m.id_tran_dau === state.selectedMatchId,
+        );
+        const game = (match.chi_tiet_game || []).find(
+          (g) =>
+            g.id_game === state.selectedGameId ||
+            (g.game_so && g.game_so.toString() === state.selectedGameId.toString()),
+        );
+        game.danh_sach_diem.splice(index, 1);
+        const newGame = recalculateGame(
+          game,
+          match.thong_tin.doi_thu_1,
+          match.thong_tin.doi_thu_2,
+        );
+        Object.assign(game, newGame);
+        window.app.setState({});
+        const result = await saveData();
+        if (result !== true && (!result || !result.success)) {
+            showToast("Lưu dữ liệu xóa thất bại", "error");
+        }
+    } finally {
+        isSavingRally = false;
+    }
   },
   editRally: (index) => {
     const match = state.matches.find(
@@ -289,7 +348,7 @@ export function renderRallyEntry() {
   const allTechniques = dict.ky_thuat || {};
   
   // Logic phân loại: Nếu key bắt đầu bằng "giao_bong" -> là giao bóng, ngược lại là đánh bóng/rally
-  const isServeTechnique = (k) => k.startsWith("giao_bong");
+  const isServeTechnique = (k) => typeof k === 'string' && k.startsWith("giao_bong");
   
   const techOptions = Object.entries(allTechniques)
     .filter(([k, v]) => !isServeTechnique(k))
@@ -343,7 +402,8 @@ export function renderRallyEntry() {
     showGrid = true,
   ) => {
     const selectedTech = rallyState.strokes[strokeKey].technique;
-    let optionsHtml = strokeKey === 'server' ? serveOptions : techOptions;
+    const isServePhase = strokeKey === 'server' || (strokeKey === 'n0' && parseInt(rallyState.touches) === 1);
+    let optionsHtml = isServePhase ? serveOptions : techOptions;
     
     // Xử lý trường hợp dữ liệu cũ không còn trong từ điển
     if (selectedTech && !optionsHtml.includes(`value="${selectedTech}"`)) {
@@ -383,9 +443,9 @@ export function renderRallyEntry() {
             ${skipButtonHtml}
             <h4 class="font-bold text-slate-700 mb-2">${title} - <span class="text-primary">${playerLabel}</span></h4>
             <div class="mb-3">
-                <label class="block text-xs font-semibold text-slate-500 mb-1">${strokeKey === 'server' ? 'Loại giao bóng' : 'Kỹ thuật'}</label>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">${isServePhase ? 'Loại giao bóng' : 'Kỹ thuật'}</label>
                 <select class="w-full p-2 border rounded-lg bg-white" onchange="window.app.actions.rally.setStrokeProp('${strokeKey}', 'technique', this.value)">
-                    <option value="">-- Chọn ${strokeKey === 'server' ? 'loại giao bóng' : 'kỹ thuật'} --</option>
+                    <option value="">-- Chọn ${isServePhase ? 'loại giao bóng' : 'kỹ thuật'} --</option>
                     ${customTechOptions}
                 </select>
             </div>

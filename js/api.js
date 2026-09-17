@@ -42,19 +42,19 @@ export async function loadData() {
         
         state.isMockMode = false;
         showToast('Tải dữ liệu từ GitHub thành công', 'success');
-        return true;
+        return { success: true };
     } catch(e) {
         console.error(e);
         showToast(e.message + ' - Đang dùng dữ liệu mẫu.', 'error');
         setMockMode();
-        return true;
+        return { success: true };
     }
 }
 
 export async function saveData() {
     if (state.isMockMode) {
         showToast("Mock Mode: Đã lưu dữ liệu vào bộ nhớ tạm.", 'info');
-        return true;
+        return { success: true };
     }
 
     try {
@@ -64,10 +64,8 @@ export async function saveData() {
             'Authorization': `Bearer ${state.github.token}`, 
             'Accept': 'application/vnd.github.v3+json' 
         };
-        let getRes = await fetch(`${baseUrl}/dulieubongban_v2.json?ref=${state.github.branch}`, {headers: headersGet});
-        if (!getRes.ok) throw new Error('Không thể lấy SHA mới nhất của file');
-        const getData = await getRes.json();
-        const currentSha = getData.sha;
+        const currentSha = state.files.matchesSha;
+        if (!currentSha) throw new Error('Missing SHA');
 
         const headersPut = { 
             'Authorization': `Bearer ${state.github.token}`, 
@@ -91,14 +89,15 @@ export async function saveData() {
             const data = await res.json();
             state.files.matchesSha = data.content.sha;
             showToast('Lưu dữ liệu lên GitHub thành công', 'success');
-            return true;
+            return { success: true };
         } else {
             const err = await res.json();
-            throw new Error(err.message || 'Lỗi khi lưu file');
+            const error = new Error(err.message || 'Lỗi khi lưu file');
+            error.status = res.status;
+            throw error;
         }
     } catch(e) {
         console.error(e);
-        showToast(`Lưu dữ liệu thất bại: ${e.message}`, 'error');
-        return false;
+        return { success: false, error: e };
     }
 }
