@@ -1407,6 +1407,15 @@
             }
           }
         ]
+      },
+      {
+        "id_game": "game_1789704592507",
+        "game_so": 3,
+        "ty_so_bat_dau": "2-0",
+        "nguoi_giao_bong_truoc": "Vũ Kim Ngọc",
+        "ty_so_chung_cuoc": "2-0",
+        "trang_thai": "dang_danh",
+        "danh_sach_diem": []
       }
     ]
   }
