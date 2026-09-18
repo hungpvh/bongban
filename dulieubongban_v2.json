@@ -1639,10 +1639,10 @@
             },
             "cu_tao_loi_the_N_2": null,
             "cu_dap_tra_N_1": {
-              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "nguoi_thuc_hien": "Hungpv",
               "ky_thuat": "doi_cong_trai",
               "dac_tinh": {
-                "diem_roi_ngang": "giua",
+                "diem_roi_ngang": "trai",
                 "do_dai": "dai",
                 "do_xoay": "len",
                 "vi_tri_hong": null
@@ -1650,7 +1650,7 @@
             },
             "cu_ket_thuc_N": {
               "tinh_chat": "forced_error",
-              "nguoi_thuc_hien": "Hungpv",
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
               "ky_thuat": "bat_dap_bong",
               "dac_tinh": {
                 "diem_roi_ngang": null,
