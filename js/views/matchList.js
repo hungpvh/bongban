@@ -111,9 +111,14 @@ export function renderMatchList() {
     if (!formData.ngay_thi_dau) resetForm();
 
     let html = `
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h2 class="text-2xl font-bold text-slate-800">Danh sách trận đấu</h2>
-        ${!isAdding ? `<button onclick="window.app.actions.matchList.toggleAdd()" class="px-4 py-2 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-hover transition"><i data-lucide="plus" class="w-5 h-5"></i> Thêm trận mới</button>` : ''}
+        <div class="flex items-center gap-2">
+            <button onclick="window.app.navigate('query')" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-bold flex items-center gap-2 transition border border-indigo-200">
+                <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600"></i> Vấn tin pha bóng
+            </button>
+            ${!isAdding ? `<button onclick="window.app.actions.matchList.toggleAdd()" class="px-4 py-2 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-hover transition"><i data-lucide="plus" class="w-5 h-5"></i> Thêm trận mới</button>` : ''}
+        </div>
     </div>
     `;
 

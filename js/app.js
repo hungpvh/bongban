@@ -7,6 +7,7 @@ import { renderMatchDetail } from './views/matchDetail.js';
 import { renderRallyEntry } from './views/rallyEntry.js';
 import { renderTimeline } from './views/timeline.js';
 import { renderDashboard } from './views/dashboard.js';
+import { renderQueryView } from './views/queryView.js';
 import * as logic from './logic.js';
 window.app.logic = logic;
 
@@ -51,6 +52,9 @@ function render() {
                 : '<span class="hidden sm:inline-flex px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] uppercase font-black tracking-wider rounded-md whitespace-nowrap"><i data-lucide="cloud-cog" class="w-3 h-3 mr-1 inline-block"></i> GITHUB</span>'}
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="window.app.navigate('query')" class="px-3 py-1.5 ${state.view === 'query' ? 'bg-primary text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'} font-bold rounded-lg text-sm flex items-center gap-1.5 transition">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> <span class="hidden sm:inline">Vấn tin</span>
+            </button>
             ${state.view === 'matchList' ? `<button onclick="window.app.navigate('dashboard', { dashboardMatchId: 'all' })" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-sm flex items-center gap-1.5 transition"><i data-lucide="pie-chart" class="w-4 h-4"></i> <span class="hidden sm:inline">Phân tích Tổng</span></button>` : ''}
             <button onclick="window.app.navigate('settings')" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition"><i data-lucide="settings" class="w-5 h-5"></i></button>
         </div>
@@ -78,6 +82,7 @@ function render() {
         case 'rallyEntry': contentHTML += renderRallyEntry(); break;
         case 'timeline': contentHTML += renderTimeline(); break;
         case 'dashboard': contentHTML += renderDashboard(); break;
+        case 'query': contentHTML += renderQueryView(); break;
         default: contentHTML += '<div>404</div>';
     }
     

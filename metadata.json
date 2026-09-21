@@ -1,0 +1,6 @@
+{
+  "name": "Sổ Tay Bóng Bàn",
+  "description": "Ứng dụng ghi chép, phân tích và vấn tin chiến thuật các pha bóng bàn bằng ngôn ngữ tự nhiên",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
