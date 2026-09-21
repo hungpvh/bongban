@@ -119,10 +119,16 @@ export function executeQuery(queryIndex = [], finalQuerySpec = {}) {
                 if (cond.techniqueKeys && cond.techniqueKeys.length > 0) {
                     if (!shot.ky_thuat || !cond.techniqueKeys.includes(shot.ky_thuat)) return false;
                 }
+                if (cond.excludeTechniqueKeys && cond.excludeTechniqueKeys.length > 0) {
+                    if (shot.ky_thuat && cond.excludeTechniqueKeys.includes(shot.ky_thuat)) return false;
+                }
 
                 // Nature
                 if (cond.nature && cond.nature.length > 0) {
                     if (!shot.tinh_chat || !cond.nature.includes(shot.tinh_chat)) return false;
+                }
+                if (cond.excludeNature && cond.excludeNature.length > 0) {
+                    if (shot.tinh_chat && cond.excludeNature.includes(shot.tinh_chat)) return false;
                 }
 
                 // Landing
@@ -143,6 +149,9 @@ export function executeQuery(queryIndex = [], finalQuerySpec = {}) {
                 // Error Location
                 if (cond.errorLocation && cond.errorLocation.length > 0) {
                     if (!shot.dac_tinh?.vi_tri_hong || !cond.errorLocation.includes(shot.dac_tinh.vi_tri_hong)) return false;
+                }
+                if (cond.excludeErrorLocation && cond.excludeErrorLocation.length > 0) {
+                    if (shot.dac_tinh?.vi_tri_hong && cond.excludeErrorLocation.includes(shot.dac_tinh.vi_tri_hong)) return false;
                 }
 
                 return true;

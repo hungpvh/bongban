@@ -53,7 +53,7 @@ function render() {
         </div>
         <div class="flex items-center gap-2">
             <button onclick="window.app.navigate('query')" class="px-3 py-1.5 ${state.view === 'query' ? 'bg-primary text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'} font-bold rounded-lg text-sm flex items-center gap-1.5 transition">
-                <i data-lucide="sparkles" class="w-4 h-4"></i> <span class="hidden sm:inline">Vấn tin</span>
+                <i data-lucide="sparkles" class="w-4 h-4"></i> <span class="hidden sm:inline">Vấn tin pha bóng</span>
             </button>
             ${state.view === 'matchList' ? `<button onclick="window.app.navigate('dashboard', { dashboardMatchId: 'all' })" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-sm flex items-center gap-1.5 transition"><i data-lucide="pie-chart" class="w-4 h-4"></i> <span class="hidden sm:inline">Phân tích Tổng</span></button>` : ''}
             <button onclick="window.app.navigate('settings')" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition"><i data-lucide="settings" class="w-5 h-5"></i></button>

@@ -1,7 +1,7 @@
 /**
  * naturalLanguageParser.js
  * Domain-specific Vietnamese Natural Language Parser for Table Tennis query pipeline.
- * Deterministic mapping to QuerySpec and ambiguity detection.
+ * Robust token-based & semantic parsing to QuerySpec with Clarification Gate.
  */
 
 export function removeAccents(str = '') {
@@ -46,34 +46,91 @@ export function createEmptyQuerySpec() {
     };
 }
 
-const TECHNIQUE_SYNONYMS = [
-    { key: 'giat_phai', phrases: ['giat phai', 'giật phải', 'topspin phai', 'forehand topspin'] },
-    { key: 'giat_trai', phrases: ['giat trai', 'giật trái', 'topspin trai', 'backhand topspin'] },
-    { key: 'giao_bong_con_lac_nguoc', phrases: ['giao bong con lac nguoc', 'giao bóng con lắc ngược', 'con lac nguoc', 'con lắc ngược', 'reverse pendulum'] },
-    { key: 'giao_bong_thuan', phrases: ['giao bong thuan', 'giao bóng thuận', 'giao bong con lac', 'giao bóng con lắc', 'con lac', 'con lắc', 'pendulum'] },
-    { key: 'giao_bong_trai', phrases: ['giao bong trai tay', 'giao bóng trái tay', 'giao bong trai', 'giao bóng trái', 'giao trai'] },
-    { key: 'giao_bong_duc', phrases: ['giao bong duc', 'giao bóng đục', 'giao duc', 'giao đục'] },
-    { key: 'giao_bong_tomahawk', phrases: ['giao bong tomahawk', 'giao bóng tomahawk', 'tomahawk', 'giao tomahawk'] },
-    { key: 'doi_cong_phai', phrases: ['doi cong phai', 'đôi công phải', 'cong phai', 'công phải'] },
-    { key: 'doi_cong_trai', phrases: ['doi cong trai', 'đôi công trái', 'cong trai', 'công trái'] },
-    { key: 'flick_phai', phrases: ['flick phai', 'flick phải', 'hat phai', 'hất phải'] },
-    { key: 'flick_trai', phrases: ['flick trai', 'flick trái', 'hat trai', 'hất trái'] },
-    { key: 'bat_dap_bong', phrases: ['bat dap bong', 'bạt đập bóng', 'bat / dap', 'bạt / đập', 'dap bong', 'đập bóng', 'dap', 'đập', 'bat', 'bạt', 'smash'] },
-    { key: 'doi_giat_xa_ban', phrases: ['doi giat xa ban', 'đối giật xa bàn', 'doi giat', 'đối giật'] },
-    { key: 'phong_thu_phai', phrases: ['phong thu phai', 'phòng thủ phải', 'ke chan phai', 'kê chặn phải', 'chan phai', 'chặn phải', 'ke phai', 'kê phải'] },
-    { key: 'phong_thu_trai', phrases: ['phong thu trai', 'phòng thủ trái', 'ke chan trai', 'kê chặn trái', 'chan trai', 'chặn trái', 'ke trai', 'kê trái'] },
-    { key: 'go_day_bong', phrases: ['go day bong', 'gò đẩy bóng', 'go / cat / day', 'gò / cắt / đẩy', 'go bong', 'gò bóng', 'day bong', 'đẩy bóng', 'cat bong', 'cắt bóng', 'go day', 'gò đẩy', 'go', 'gò'] },
-    { key: 'bat_ngan_tha_long', phrases: ['bat ngan tha long', 'bắt ngắn thả lỏng', 'bat ngan / tha long', 'bắt ngắn / thả lỏng', 'bat ngan', 'bắt ngắn', 'tha long', 'thả lỏng'] },
-    { key: 'cau_bong_bong', phrases: ['cau bong bong', 'câu bóng bổng', 'cau bong', 'câu bóng'] },
-    { key: 'loi_khac', phrases: ['loi khac', 'lỗi khác', 'giao hong', 'giao hỏng'] }
-];
+const WORD_TO_NUM = {
+    'mot': 1, 'hai': 2, 'ba': 3, 'bon': 4, 'tu': 4, 'nam': 5,
+    'sau': 6, 'bay': 7, 'tam': 8, 'chin': 9, 'muoi': 10
+};
+
+function parseNumWordOrDigits(token) {
+    if (!token) return null;
+    token = token.trim().toLowerCase();
+    if (/^\d+$/.test(token)) return parseInt(token, 10);
+    if (WORD_TO_NUM[token] !== undefined) return WORD_TO_NUM[token];
+    return null;
+}
+
+export function parseTouchCondition(normText) {
+    // 1. Between: "tu 3 den 5 cham", "tu 3-5 cham", "3 den 5 cham", "3-5 cham", "khoang 3 den 5 cham"
+    const betweenRegex = /(?:tu|khoang|trong\s+khoang)?\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*(?:den|toi|-)\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham/i;
+    const betweenMatch = normText.match(betweenRegex);
+    if (betweenMatch) {
+        const min = parseNumWordOrDigits(betweenMatch[1]);
+        const max = parseNumWordOrDigits(betweenMatch[2]);
+        if (min !== null && max !== null) {
+            return { min: Math.min(min, max), max: Math.max(min, max), text: `Từ ${min} đến ${max} chạm` };
+        }
+    }
+
+    // 2. GTE: "tu 3 cham tro len", "3 cham tro len", "it nhat 3 cham", "toi thieu 3 cham", ">= 3 cham", "3+ cham"
+    const gteRegex = /(?:tu\s+(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham\s*tro\s*len)|(?:(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham\s*tro\s*len)|(?:(?:it\s+nhat|toi\s+thieu|>=)\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham)|(?:(\d+)\+\s*cham)/i;
+    const gteMatch = normText.match(gteRegex);
+    if (gteMatch) {
+        const numToken = gteMatch[1] || gteMatch[2] || gteMatch[3] || gteMatch[4];
+        const n = parseNumWordOrDigits(numToken);
+        if (n !== null) {
+            return { min: n, text: `Từ ${n} chạm trở lên (>= ${n})` };
+        }
+    }
+
+    // 3. GT: "tren 3 cham", "nhieu hon 3 cham", "lon hon 3 cham", "> 3 cham"
+    const gtRegex = /(?:tren|nhieu\s+hon|lon\s+hon|>)\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham/i;
+    const gtMatch = normText.match(gtRegex);
+    if (gtMatch) {
+        const n = parseNumWordOrDigits(gtMatch[1]);
+        if (n !== null) {
+            return { min: n + 1, text: `Trên ${n} chạm (> ${n})` };
+        }
+    }
+
+    // 4. LTE: "tu 4 cham tro xuong", "4 cham tro xuong", "toi da 4 cham", "khong qua 4 cham", "<= 4 cham"
+    const lteRegex = /(?:tu\s+(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham\s*tro\s*xuong)|(?:(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham\s*tro\s*xuong)|(?:(?:toi\s+da|khong\s+qua|<=)\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham)/i;
+    const lteMatch = normText.match(lteRegex);
+    if (lteMatch) {
+        const numToken = lteMatch[1] || lteMatch[2] || lteMatch[3];
+        const n = parseNumWordOrDigits(numToken);
+        if (n !== null) {
+            return { max: n, text: `Tối đa ${n} chạm (<= ${n})` };
+        }
+    }
+
+    // 5. LT: "duoi 4 cham", "it hon 4 cham", "nho hon 4 cham", "< 4 cham"
+    const ltRegex = /(?:duoi|it\s+hon|nho\s+hon|<)\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham/i;
+    const ltMatch = normText.match(ltRegex);
+    if (ltMatch) {
+        const n = parseNumWordOrDigits(ltMatch[1]);
+        if (n !== null) {
+            return { max: n - 1, text: `Dưới ${n} chạm (< ${n})` };
+        }
+    }
+
+    // 6. EQ: "3 cham", "dung 3 cham", "chinh xac 3 cham"
+    const eqRegex = /(?:dung|chinh\s+xac)?\s*(\d+|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s*cham/i;
+    const eqMatch = normText.match(eqRegex);
+    if (eqMatch) {
+        const n = parseNumWordOrDigits(eqMatch[1]);
+        if (n !== null) {
+            return { eq: n, text: `${n} chạm` };
+        }
+    }
+
+    return null;
+}
 
 function escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function matchPhrase(textNorm, phraseNorm) {
-    // If phrase is short (<= 3 chars or single word), enforce word boundaries
     if (phraseNorm.length <= 4 || !phraseNorm.includes(' ')) {
         const regex = new RegExp(`(^|[^a-z0-9])${escapeRegex(phraseNorm)}($|[^a-z0-9])`, 'i');
         return regex.test(textNorm);
@@ -81,15 +138,82 @@ function matchPhrase(textNorm, phraseNorm) {
     return textNorm.includes(phraseNorm);
 }
 
-export function findTechniqueInText(rawText, dictionary = null) {
-    const norm = removeAccents(rawText);
+const COMPOUND_TECHNIQUES = [
+    {
+        regex: /(?:giat|topspin)\s+(?:phai\s+(?:hoac|hay|\/|va)\s+trai|trai\s+(?:hoac|hay|\/|va)\s+phai)/i,
+        keys: ['giat_phai', 'giat_trai'],
+        label: 'Giật (phải hoặc trái)'
+    },
+    {
+        regex: /(?:flick|hat)\s+(?:phai\s+(?:hoac|hay|\/|va)\s+trai|trai\s+(?:hoac|hay|\/|va)\s+phai)/i,
+        keys: ['flick_phai', 'flick_trai'],
+        label: 'Flick / Hất (phải hoặc trái)'
+    },
+    {
+        regex: /(?:doi\s+cong|cong)\s+(?:phai\s+(?:hoac|hay|\/|va)\s+trai|trai\s+(?:hoac|hay|\/|va)\s+phai)/i,
+        keys: ['doi_cong_phai', 'doi_cong_trai'],
+        label: 'Đôi công (phải hoặc trái)'
+    },
+    {
+        regex: /(?:phong\s+thu|ke\s+chan|chan|ke)\s+(?:phai\s+(?:hoac|hay|\/|va)\s+trai|trai\s+(?:hoac|hay|\/|va)\s+phai)/i,
+        keys: ['phong_thu_phai', 'phong_thu_trai'],
+        label: 'Phòng thủ / Kê chặn (phải hoặc trái)'
+    }
+];
 
-    // Build all candidate phrases sorted by length descending so specific/longer phrases match first
+const TECHNIQUE_SYNONYMS = [
+    // Serves
+    { key: 'giao_bong_con_lac_nguoc', isServe: true, phrases: ['giao bong con lac nguoc', 'con lac nguoc', 'reverse pendulum', 'giao con lac nguoc'] },
+    { key: 'giao_bong_thuan', isServe: true, phrases: ['giao bong thuan', 'giao thuan', 'giao bong con lac', 'con lac', 'pendulum'] },
+    { key: 'giao_bong_trai', isServe: true, phrases: ['giao bong trai tay', 'giao bong trai', 'giao trai tay', 'giao trai'] },
+    { key: 'giao_bong_duc', isServe: true, phrases: ['giao bong duc', 'giao duc'] },
+    { key: 'giao_bong_tomahawk', isServe: true, phrases: ['giao bong tomahawk', 'giao tomahawk', 'tomahawk', 'giao bong xeng', 'giao xeng'] },
+
+    // Specific rally
+    { key: 'doi_giat_xa_ban', isServe: false, phrases: ['doi giat xa ban', 'doi giat'] },
+    { key: 'giat_phai', isServe: false, phrases: ['giat phai', 'topspin phai', 'forehand topspin', 'giat forehand'] },
+    { key: 'giat_trai', isServe: false, phrases: ['giat trai', 'topspin trai', 'backhand topspin', 'giat backhand'] },
+    { key: 'doi_cong_phai', isServe: false, phrases: ['doi cong phai', 'cong phai'] },
+    { key: 'doi_cong_trai', isServe: false, phrases: ['doi cong trai', 'cong trai'] },
+    { key: 'flick_phai', isServe: false, phrases: ['flick phai', 'hat phai'] },
+    { key: 'flick_trai', isServe: false, phrases: ['flick trai', 'hat trai'] },
+    { key: 'phong_thu_phai', isServe: false, phrases: ['phong thu phai', 'ke chan phai', 'chan phai', 'ke phai', 'block phai'] },
+    { key: 'phong_thu_trai', isServe: false, phrases: ['phong thu trai', 'ke chan trai', 'chan trai', 'ke trai', 'block trai'] },
+    { key: 'bat_dap_bong', isServe: false, phrases: ['bat dap bong', 'bat / dap', 'dap bong', 'bat bong', 'dap', 'bat', 'smash'] },
+    { key: 'go_day_bong', isServe: false, phrases: ['go day bong', 'go / cat / day', 'go bong', 'day bong', 'cat bong', 'go day', 'go', 'day', 'cat'] },
+    { key: 'bat_ngan_tha_long', isServe: false, phrases: ['bat ngan tha long', 'bat ngan / tha long', 'bat ngan', 'tha long'] },
+    { key: 'cau_bong_bong', isServe: false, phrases: ['cau bong bong', 'cau bong', 'lob'] },
+    { key: 'loi_khac', isServe: false, phrases: ['loi khac', 'giao hong'] },
+
+    // Generic families (when neither right nor left was specified)
+    { keys: ['giat_phai', 'giat_trai'], isServe: false, family: 'giat', phrases: ['giat bong', 'qua giat', 'cu giat', 'pha giat', 'don giat', 'giat', 'topspin'] },
+    { keys: ['flick_phai', 'flick_trai'], isServe: false, family: 'flick', phrases: ['flick bong', 'qua flick', 'cu flick', 'flick', 'hat bong', 'qua hat', 'cu hat', 'hat'] },
+    { keys: ['doi_cong_phai', 'doi_cong_trai'], isServe: false, family: 'doi_cong', phrases: ['doi cong bong', 'doi cong'] },
+    { keys: ['phong_thu_phai', 'phong_thu_trai'], isServe: false, family: 'phong_thu', phrases: ['phong thu bong', 'phong thu', 'ke chan', 'chan bong', 'ke bong', 'block'] }
+];
+
+function sanitizeForTechniqueMatching(textNorm) {
+    // Mask temporal adverbs like "gan day", "dao gan day", "sau day", "tu day", "den day"
+    return textNorm
+        .replace(/\b(dao\s+gan\s+day|thoi\s+gian\s+gan\s+day|thoi\s+gian\s+vua\s+qua|gan\s+day|sau\s+day|tu\s+day|den\s+day)\b/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+export function findTechniqueInText(rawText, dictionary = null) {
+    const norm = sanitizeForTechniqueMatching(removeAccents(rawText));
+
+    for (const comp of COMPOUND_TECHNIQUES) {
+        if (comp.regex.test(norm)) {
+            return comp.keys[0];
+        }
+    }
+
     const candidateList = [];
     for (const item of TECHNIQUE_SYNONYMS) {
         for (const phrase of item.phrases) {
             candidateList.push({
-                key: item.key,
+                key: item.keys ? item.keys[0] : item.key,
                 phraseNorm: removeAccents(phrase)
             });
         }
@@ -113,6 +237,35 @@ export function findTechniqueInText(rawText, dictionary = null) {
     return null;
 }
 
+function extractTechniquesFromSegment(segmentNorm) {
+    const cleanSegment = sanitizeForTechniqueMatching(segmentNorm);
+
+    for (const comp of COMPOUND_TECHNIQUES) {
+        if (comp.regex.test(cleanSegment)) {
+            return { keys: comp.keys, label: comp.label, isServe: false };
+        }
+    }
+    const candidates = [];
+    for (const item of TECHNIQUE_SYNONYMS) {
+        for (const p of item.phrases) {
+            candidates.push({
+                keys: item.keys || [item.key],
+                isServe: item.isServe,
+                label: item.family || item.key,
+                phraseNorm: removeAccents(p)
+            });
+        }
+    }
+    candidates.sort((a, b) => b.phraseNorm.length - a.phraseNorm.length);
+
+    for (const cand of candidates) {
+        if (matchPhrase(cleanSegment, cand.phraseNorm)) {
+            return { keys: cand.keys, isServe: cand.isServe, label: cand.label };
+        }
+    }
+    return null;
+}
+
 export function parseNaturalLanguage(rawText = '', context = {}) {
     const text = rawText.trim();
     const norm = removeAccents(text);
@@ -124,11 +277,11 @@ export function parseNaturalLanguage(rawText = '', context = {}) {
     const matches = context.matches || [];
     const dictionary = context.dictionary || null;
 
-    // 1. Check Opponent names in actual data
+    // 1. Opponent names in actual data
     const availableOpponents = Array.from(new Set(matches.map(m => m.thong_tin?.doi_thu_2).filter(Boolean)));
     for (const opp of availableOpponents) {
         const oppNorm = removeAccents(opp);
-        if (norm.includes(oppNorm)) {
+        if (matchPhrase(norm, oppNorm)) {
             querySpec.match.opponents.push(opp);
             understoodConditions.push(`Đối thủ: ${opp}`);
         }
@@ -147,114 +300,163 @@ export function parseNaturalLanguage(rawText = '', context = {}) {
     }
 
     // 3. Touch Count
-    const touchMatch = norm.match(/(\d+)\s*cham/);
-    if (touchMatch) {
-        const n = parseInt(touchMatch[1], 10);
-        querySpec.point.touchCount.eq = n;
-        understoodConditions.push(`Số chạm: ${n} chạm`);
-    } else if (norm.includes('ba cham')) {
-        querySpec.point.touchCount.eq = 3;
-        understoodConditions.push('Số chạm: 3 chạm');
-    } else if (norm.includes('hai cham')) {
-        querySpec.point.touchCount.eq = 2;
-        understoodConditions.push('Số chạm: 2 chạm');
-    } else if (norm.includes('bon cham')) {
-        querySpec.point.touchCount.eq = 4;
-        understoodConditions.push('Số chạm: 4 chạm');
-    } else if (norm.includes('nam cham')) {
-        querySpec.point.touchCount.eq = 5;
-        understoodConditions.push('Số chạm: 5 chạm');
+    const touch = parseTouchCondition(norm);
+    if (touch) {
+        if (touch.eq !== undefined) querySpec.point.touchCount.eq = touch.eq;
+        if (touch.min !== undefined) querySpec.point.touchCount.min = touch.min;
+        if (touch.max !== undefined) querySpec.point.touchCount.max = touch.max;
+        understoodConditions.push(`Số chạm: ${touch.text}`);
     }
 
     // 4. Server
-    if (norm.includes('toi giao bong') || norm.includes('toi la nguoi giao') || norm.includes('khi toi giao') || norm.includes('giao bong cua toi') || norm.includes('toi giao')) {
+    if (norm.includes('toi giao bong') || norm.includes('toi la nguoi giao') || norm.includes('khi toi giao') || norm.includes('giao bong cua toi') || norm.includes('qua giao bong cua toi') || norm.includes('toi phat bong') || norm.includes('toi giao')) {
         querySpec.point.server = 'SELF';
         understoodConditions.push('Người giao: Tôi');
-    } else if (norm.includes('doi thu giao bong') || norm.includes('doi thu la nguoi giao') || norm.includes('khi doi thu giao') || norm.includes('doi thu giao')) {
+    } else if (norm.includes('doi thu giao bong') || norm.includes('doi thu la nguoi giao') || norm.includes('khi doi thu giao') || norm.includes('doi phuong giao') || norm.includes('doi thu giao') || norm.includes('giao bong cua doi thu')) {
         querySpec.point.server = 'OPPONENT';
         understoodConditions.push('Người giao: Đối thủ');
     }
 
     // 5. Result
-    const anyResultPhrases = ['co the ghi diem hoac mat diem', 'bat ke thang thua', 'ca thang va thua', 'thang hoac thua', 'thang hay thua'];
+    const anyResultPhrases = ['co the ghi diem hoac mat diem', 'bat ke thang thua', 'ca thang va thua', 'thang hoac thua', 'thang hay thua', 'thang/thua'];
     if (anyResultPhrases.some(p => norm.includes(p))) {
         querySpec.point.result = 'ANY';
         understoodConditions.push('Kết quả: Tất cả (thắng hoặc thua)');
-    } else if (norm.includes('ghi diem') || norm.includes('toi thang') || norm.includes('thang pha') || norm.includes('thang diem') || norm.includes('thang')) {
-        // Double check it's not "thuong thua"
-        if (!norm.includes('thuong thua') && !norm.includes('mat diem')) {
+    } else if (norm.includes('khong mat diem') || norm.includes('khong thua')) {
+        querySpec.point.result = 'SELF_WIN';
+        understoodConditions.push('Kết quả: Tôi ghi điểm (Thắng)');
+    } else if (norm.includes('khong ghi diem') || norm.includes('khong an diem') || norm.includes('khong thang')) {
+        querySpec.point.result = 'SELF_LOSE';
+        understoodConditions.push('Kết quả: Tôi mất điểm (Thua)');
+    } else if (norm.includes('ghi diem') || norm.includes('toi thang') || norm.includes('minh thang') || norm.includes('thang pha') || norm.includes('thang diem') || norm.includes('an diem') || norm.includes('thang')) {
+        if (!norm.includes('thuong thua') && !norm.includes('mat diem') && !norm.includes('thua diem')) {
             querySpec.point.result = 'SELF_WIN';
             understoodConditions.push('Kết quả: Tôi ghi điểm (Thắng)');
         }
-    } else if (norm.includes('mat diem') || norm.includes('toi thua') || norm.includes('thua pha') || norm.includes('thua diem')) {
+    } else if (norm.includes('mat diem') || norm.includes('toi thua') || norm.includes('minh thua') || norm.includes('thua pha') || norm.includes('thua diem') || norm.includes('bi mat diem') || norm.includes('thua')) {
         querySpec.point.result = 'SELF_LOSE';
         understoodConditions.push('Kết quả: Tôi mất điểm (Thua)');
     }
 
     // 6. Semantic Rules
-    // a. Direct serve win
-    if (norm.includes('giao bong an diem truc tiep') || norm.includes('an diem truc tiep bang giao bong') || norm.includes('ace giao bong') || (norm.includes('giao bong an diem') && norm.includes('truc tiep'))) {
+    if (norm.includes('giao bong an diem truc tiep') || norm.includes('an diem truc tiep bang giao bong') || norm.includes('ace giao bong') || norm.includes('giao bong ace') || (norm.includes('giao bong an diem') && norm.includes('truc tiep'))) {
         querySpec.point.server = 'SELF';
         querySpec.point.result = 'SELF_WIN';
         querySpec.point.semanticTags.push('DIRECT_SERVE_WIN');
         understoodConditions.push('Pha bóng: Giao bóng ăn điểm trực tiếp');
     }
 
-    // b. Opponent receive error on my serve
-    if (norm.includes('do hong giao bong') || norm.includes('do giao bong hong') || norm.includes('bi do hong giao bong')) {
+    if (norm.includes('do hong giao bong') || norm.includes('do giao bong hong') || norm.includes('bi do hong giao bong') || norm.includes('doi thu do hong giao bong')) {
         querySpec.point.server = 'SELF';
         querySpec.point.result = 'SELF_WIN';
         querySpec.point.semanticTags.push('OPPONENT_RECEIVE_ERROR_ON_MY_SERVE');
         understoodConditions.push('Pha bóng: Đối thủ đỡ hỏng giao bóng của tôi');
     }
 
-    // 7. Shot slots and techniques
-    // Check finishing shot (N)
-    if (norm.includes('ket thuc bang') || norm.includes('ket thuc voi') || norm.includes('cuoi bang')) {
-        const afterFinish = norm.split(/ket thuc bang|ket thuc voi|cuoi bang/)[1] || '';
-        const techKey = findTechniqueInText(afterFinish, dictionary);
-        if (techKey) {
-            let actor = 'ANY';
-            if (norm.includes('toi ket thuc')) actor = 'SELF';
-            else if (norm.includes('doi thu ket thuc')) actor = 'OPPONENT';
+    // 7. Serve technique and properties
+    const serveTech = extractTechniquesFromSegment(norm);
+    if (serveTech && serveTech.isServe) {
+        querySpec.point.serve.techniqueKeys = serveTech.keys;
+        const labels = serveTech.keys.map(k => dictionary?.ky_thuat?.[k] || k).join(' hoặc ');
+        understoodConditions.push(`Kỹ thuật giao bóng: ${labels}`);
+    }
 
-            querySpec.point.rallyConditions.push({
-                slot: 'N',
-                actor,
-                techniqueKeys: [techKey],
-                nature: [],
-                horizontalLanding: [],
-                length: [],
-                spin: [],
-                errorLocation: []
-            });
-            const techLabel = dictionary?.ky_thuat?.[techKey] || techKey;
-            understoodConditions.push(`Cú kết thúc (N): ${techLabel}${actor === 'SELF' ? ' (Tôi)' : actor === 'OPPONENT' ? ' (Đối thủ)' : ''}`);
+    if (norm.includes('giao bong ngan') || norm.includes('giao ngan')) {
+        querySpec.point.serve.length.push('ngan');
+        understoodConditions.push('Độ dài giao bóng: Ngắn');
+    } else if (norm.includes('giao bong dai') || norm.includes('giao dai')) {
+        querySpec.point.serve.length.push('dai');
+        understoodConditions.push('Độ dài giao bóng: Dài');
+    }
+    if (norm.includes('giao xoay xuong') || norm.includes('giao nang')) {
+        querySpec.point.serve.spin.push('xuong');
+        understoodConditions.push('Độ xoáy giao bóng: Xoáy xuống');
+    }
+
+    // 8. Finishing & Rally conditions
+    const finishMatch = norm.match(/(?:ket\s+thuc|cuoi\s+cung|pha\s+cuoi|cu\s+cuoi|cu\s+ket\s+thuc|qua\s+ket\s+thuc)\s+(?:bang|voi|la|qua|cu)?\s*([^,.;]+)/i);
+    let finishingHandled = false;
+
+    if (finishMatch) {
+        const finishSegment = finishMatch[1] || '';
+        const techMatch = extractTechniquesFromSegment(finishSegment);
+
+        let actor = 'ANY';
+        if (norm.includes('toi ket thuc') || norm.includes('toi danh ket thuc')) {
+            actor = 'SELF';
+        } else if (norm.includes('doi thu ket thuc') || norm.includes('doi phuong ket thuc')) {
+            actor = 'OPPONENT';
+        } else if (/trong\s+do\s+toi\s+giao\s+bong\s+va\s+ket\s+thuc/i.test(norm) || /toi\s+giao\s+bong\s+va\s+ket\s+thuc/i.test(norm)) {
+            actor = 'SELF';
         }
-    } else {
-        // If query mentions technique without "kết thúc bằng", check if it's general or finishing
-        const techKey = findTechniqueInText(norm, dictionary);
-        if (techKey && !techKey.startsWith('giao_bong')) {
-            // Check if already in conditions
-            const alreadyIn = querySpec.point.rallyConditions.some(rc => rc.techniqueKeys.includes(techKey));
-            if (!alreadyIn) {
-                querySpec.point.rallyConditions.push({
-                    slot: 'ANY',
-                    actor: 'ANY',
-                    techniqueKeys: [techKey],
-                    nature: [],
-                    horizontalLanding: [],
-                    length: [],
-                    spin: [],
-                    errorLocation: []
-                });
-                const techLabel = dictionary?.ky_thuat?.[techKey] || techKey;
-                understoodConditions.push(`Kỹ thuật pha bóng: ${techLabel}`);
-            }
+
+        const rallyCond = {
+            slot: 'N',
+            actor,
+            techniqueKeys: techMatch ? techMatch.keys : [],
+            excludeTechniqueKeys: [],
+            nature: [],
+            excludeNature: [],
+            horizontalLanding: [],
+            length: [],
+            spin: [],
+            errorLocation: [],
+            excludeErrorLocation: []
+        };
+
+        if (finishSegment.includes('winner') || finishSegment.includes('truc tiep')) rallyCond.nature.push('winner');
+        if (finishSegment.includes('tu danh hong') || finishSegment.includes('tu hong')) rallyCond.nature.push('unforced_error');
+        if (finishSegment.includes('bi ep hong')) rallyCond.nature.push('forced_error');
+
+        if (finishSegment.includes('khong ruc luoi')) rallyCond.excludeErrorLocation.push('ruc_luoi');
+        else if (finishSegment.includes('ruc luoi')) rallyCond.errorLocation.push('ruc_luoi');
+
+        if (finishSegment.includes('khong ra ngoai')) {
+            rallyCond.excludeErrorLocation.push('ra_ngoai_dai', 'ra_ngoai_bien');
+        } else if (finishSegment.includes('ra ngoai bien')) {
+            rallyCond.errorLocation.push('ra_ngoai_bien');
+        } else if (finishSegment.includes('ra ngoai')) {
+            rallyCond.errorLocation.push('ra_ngoai_dai');
+        }
+
+        if (techMatch || rallyCond.nature.length > 0 || rallyCond.errorLocation.length > 0 || rallyCond.excludeErrorLocation.length > 0) {
+            querySpec.point.rallyConditions.push(rallyCond);
+            const techLabel = techMatch ? (techMatch.keys.map(k => dictionary?.ky_thuat?.[k] || k).join(' / ')) : 'Bất kỳ';
+            understoodConditions.push(`Cú kết thúc (N): ${techLabel}${actor === 'SELF' ? ' (Tôi)' : actor === 'OPPONENT' ? ' (Đối thủ)' : ''}`);
+            finishingHandled = true;
         }
     }
 
-    // 8. Analysis Dimension and Aggregation
+    if (!finishingHandled) {
+        let rallyText = norm;
+        if (serveTech && serveTech.isServe) {
+            rallyText = rallyText.replace(/giao\s+bong\s+[a-z\s]+/i, ' ');
+        }
+        const generalTech = extractTechniquesFromSegment(rallyText);
+        if (generalTech && !generalTech.isServe) {
+            let actor = 'ANY';
+            if (norm.includes('toi ') || norm.includes('minh ')) actor = 'SELF';
+            else if (norm.includes('doi thu ') || norm.includes('doi phuong ')) actor = 'OPPONENT';
+
+            querySpec.point.rallyConditions.push({
+                slot: 'ANY',
+                actor,
+                techniqueKeys: generalTech.keys,
+                excludeTechniqueKeys: [],
+                nature: [],
+                excludeNature: [],
+                horizontalLanding: [],
+                length: [],
+                spin: [],
+                errorLocation: [],
+                excludeErrorLocation: []
+            });
+            const techLabel = generalTech.keys.map(k => dictionary?.ky_thuat?.[k] || k).join(' / ');
+            understoodConditions.push(`Kỹ thuật pha bóng: ${techLabel}${actor === 'SELF' ? ' (Tôi)' : ''}`);
+        }
+    }
+
+    // 9. Analysis Dimension and Aggregation
     if (norm.includes('kieu giao bong nao') || norm.includes('ky thuat giao bong nao') || norm.includes('loai giao bong nao')) {
         querySpec.analysisDimension = 'SERVE_TECHNIQUE';
         understoodConditions.push('Thống kê theo: Kỹ thuật giao bóng');
@@ -265,9 +467,9 @@ export function parseNaturalLanguage(rawText = '', context = {}) {
         understoodConditions.push('Sắp xếp: Tần suất nhiều nhất');
     }
 
-    // 9. Ambiguity Detection (Clarification Gate)
-    // A. TIME_AMBIGUITY: "gần đây", "dạo gần đây", "vừa qua"
-    if (norm.includes('gan day') || norm.includes('dao gan day') || norm.includes('thoi gian vua qua') || norm.includes('vua roi')) {
+    // 10. Ambiguity Detection (Clarification Gate)
+    // A. TIME_AMBIGUITY: "gần đây", "dạo gần đây", "thời gian gần đây", "vừa qua"
+    if (norm.includes('gan day') || norm.includes('dao gan day') || norm.includes('thoi gian gan day') || norm.includes('thoi gian vua qua') || norm.includes('vua roi') || norm.includes('vua qua')) {
         ambiguities.push({
             id: 'time_scope',
             type: 'TIME_AMBIGUITY',
@@ -338,7 +540,6 @@ export function resolveAmbiguities(querySpecDraft, selectedChoices = {}, context
     // 1. Time scope
     const timeChoice = selectedChoices['time_scope'];
     if (timeChoice) {
-        // Sort matches by date desc
         const sortedMatches = [...matches].sort((a, b) => {
             const da = a.thong_tin?.ngay_thi_dau || '';
             const db = b.thong_tin?.ngay_thi_dau || '';
@@ -403,17 +604,28 @@ export function resolveAmbiguities(querySpecDraft, selectedChoices = {}, context
         if (!finalSpec.point.semanticTags.includes('THIRD_BALL_ATTACK')) {
             finalSpec.point.semanticTags.push('THIRD_BALL_ATTACK');
         }
+        if (!finalSpec.point.touchCount.min || finalSpec.point.touchCount.min < 3) {
+            finalSpec.point.touchCount.min = 3;
+        }
     } else if (thirdBallChoice === 'any_touch_3') {
-        finalSpec.point.touchCount.min = 3;
+        if (!finalSpec.point.touchCount.min || finalSpec.point.touchCount.min < 3) {
+            finalSpec.point.touchCount.min = 3;
+        }
         finalSpec.point.rallyConditions.push({
             slot: 'TOUCH_3',
             actor: 'SELF',
-            techniqueKeys: [],
+            techniqueKeys: [
+                'giat_phai', 'giat_trai', 'flick_phai', 'flick_trai',
+                'doi_cong_phai', 'doi_cong_trai', 'bat_dap_bong', 'doi_giat_xa_ban'
+            ],
+            excludeTechniqueKeys: [],
             nature: [],
+            excludeNature: [],
             horizontalLanding: [],
             length: [],
             spin: [],
-            errorLocation: []
+            errorLocation: [],
+            excludeErrorLocation: []
         });
     }
 
