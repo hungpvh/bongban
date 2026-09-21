@@ -104,6 +104,7 @@ window.app.actions.rally = {
         game.nguoi_giao_bong_truoc,
         p1,
         p2,
+        game,
       );
       const isServer = (t) => t % 2 !== 0;
 
@@ -490,10 +491,11 @@ export function renderRallyEntry() {
     game.nguoi_giao_bong_truoc,
     p1,
     p2,
+    game,
   );
   const isServer = (t) => t % 2 !== 0;
 
-  const serverLabel = currentServer;
+  const serverLabel = currentServer || p1;
   const receiverLabel = currentServer === p1 ? p2 : p1;
 
   const touchesOrdered = [];
@@ -556,7 +558,7 @@ export function renderRallyEntry() {
             
             <div class="flex items-center gap-2">
                 <button onclick="window.app.navigate('timeline', {selectedMatchId: '${match.id_tran_dau}', selectedGameId: '${state.selectedGameId}'})" class="px-3 py-1.5 bg-blue-50 text-blue-600 font-bold text-sm rounded-lg hover:bg-blue-100 transition shadow-sm border border-blue-100"><i data-lucide="list" class="w-4 h-4 inline-block mr-1"></i> Xem Timeline</button>
-                <div class="w-20 text-right text-xs font-semibold text-slate-500 hidden sm:block">Giao bóng:<br><span class="text-primary">${currentServer}</span></div>
+                <div class="w-20 text-right text-xs font-semibold text-slate-500 hidden sm:block">Giao bóng:<br><span class="text-primary">${currentServer || "Hết game"}</span></div>
             </div>
 
         </div>
