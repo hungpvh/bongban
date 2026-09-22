@@ -2204,7 +2204,7 @@
         "game_so": 4,
         "ty_so_bat_dau": "2-0",
         "nguoi_giao_bong_truoc": "Hungpv",
-        "ty_so_chung_cuoc": "7-7",
+        "ty_so_chung_cuoc": "8-7",
         "trang_thai": "dang_danh",
         "danh_sach_diem": [
           {
@@ -2636,6 +2636,46 @@
               "ky_thuat": "bat_dap_bong",
               "dac_tinh": {
                 "diem_roi_ngang": "phai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            }
+          },
+          {
+            "thu_tu_diem": 13,
+            "ty_so_hien_tai": "8-7",
+            "loai_diem": "thang",
+            "nguoi_ghi_diem": "Hungpv",
+            "tong_so_cham": 3,
+            "nguoi_giao_bong": "Hungpv",
+            "khoi_nguon_giao_bong": {
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "giao_bong_thuan",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "long",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_tao_loi_the_N_2": null,
+            "cu_dap_tra_N_1": {
+              "nguoi_thuc_hien": "Vũ Kim Ngọc",
+              "ky_thuat": "flick_trai",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
+                "do_dai": "dai",
+                "do_xoay": "len",
+                "vi_tri_hong": null
+              }
+            },
+            "cu_ket_thuc_N": {
+              "tinh_chat": "winner",
+              "nguoi_thuc_hien": "Hungpv",
+              "ky_thuat": "bat_dap_bong",
+              "dac_tinh": {
+                "diem_roi_ngang": "trai",
                 "do_dai": "dai",
                 "do_xoay": "len",
                 "vi_tri_hong": null
